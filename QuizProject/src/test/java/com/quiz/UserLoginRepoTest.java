@@ -2,6 +2,9 @@ package com.quiz;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import javax.transaction.Transactional;
+
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
@@ -24,10 +27,11 @@ public class UserLoginRepoTest {
 	private TestEntityManager entityManager;
 	
 	@Autowired
+	@Transactional
 	public void testCreateUser() {
 		UserLogin user = new UserLogin();
-		user.setEmail("viktor.cvetkovski.c7@gmail.com");
-		user.setPassword("12345678");
+		user.setEmail("viktor.c@gmail.com");
+		user.setPassword("123456");
 		user.setFirstName("Viktor");
 		user.setLastName("Cvetkovski");	
 		
@@ -36,5 +40,15 @@ public class UserLoginRepoTest {
 		UserLogin existUser = entityManager.find(UserLogin.class, savedUser.getId());
 		
 		assertThat(existUser.getEmail()).isEqualTo(user.getEmail());
+	}
+	
+	@Test
+	@Transactional
+	public void testFindUserByEMail() {
+		String email = "viktor.c@gmail.com";
+		
+		UserLogin userlog = UserRepo.findByEmail(email);
+		
+		assertThat(userlog).isNotNull();
 	}
 }
